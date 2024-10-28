@@ -1,0 +1,70 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+# {{ ansible_managed }}
+# {{ template_fullpath }}
+
+name: {{ docker_project_slug }}
+
+services:
+
+  subsonic:
+    container_name: {{ docker_project_slug }}
+    # https://github.com/stuckj/subsonic-docker
+    image: stuckj/subsonic:{{ subsonic_version }}
+    restart: unless-stopped
+
+    {{ docker_project_compose_service_additional_options | indent(4) }}
+
+    environment:
+      # The numeric user id to use for the subsonic user 	1000
+      - SUBSONIC_UID={{ ansible_user_uid }}
+      # The numeric group id to use for the subsonic user group
+      - SUBSONIC_GID={{ ansible_user_gid }}
+
+      # The default folder (within the container) for music.
+      #- SUBSONIC_DEFAULT_MUSIC_FOLDER=/var/music
+      # The default folder (within the container) for podcasts.
+      #- SUBSONIC_DEFAULT_PODCAST_FOLDER=/var/music/Podcast
+      # The default folder (within the container) for playlists.
+      #- SUBSONIC_DEFAULT_PLAYLIST_FOLDER=/var/playlists
+
+      # The home directory for subsonic (inside the container).
+      #- SUBSONIC_HOME=/var/subsonic
+
+      # The hostname or IP of the interface to bind to. You very likely don't want to change this in a container.
+      #- SUBSONIC_HOST=0.0.0.0
+      # The port to bind subsonic to.
+      #- SUBSONIC_PORT=4040
+      # The port to use for HTTPS.
+      #- SUBSONIC_HTTPS_PORT=
+      # The path in the URL under which subsonic will reside.
+      #- SUBSONIC_CONTEXT_PATH=/
+
+      # The JDBC database string of the DB to use for subsonic. The default is an in-memory HSQLDB.
+      #- SUBSONIC_DB=
+
+      # The maximum amount of RAM in MB Subsonic may use
+      #- SUBSONIC_MAX_MEMORY=150
+
+    volumes:
+      # Subsonic data directory
+      - ./data:/var/subsonic
+
+      # Media directories
+      {% for item in subsonic_media_volumes %}
+      - type: bind
+        source: {{ item.src }}
+        target: {{ item.dest | default(item.src) }}
+        bind:
+          create_host_path: false
+      {% endfor %}
+
+    labels:
+      {{ traefik_project_base_labels | indent(6) }}
+
+      # What's up Docker? - https://github.com/getwud/wud
+      wud.watch.digest: true
+
+networks:
+  {{ docker_project_default_network | indent(2) }}
+
+{{ docker_project_compose_additional_options }}
