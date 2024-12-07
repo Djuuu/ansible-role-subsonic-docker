@@ -36,7 +36,6 @@ subsonic_traefik_entrypoints: http,https
 subsonic_traefik_middlewares:
   - "https-redirect@file"
   - "rewrite-location-https@file"
-  - "{{ docker_project_slug }}-cors@docker"
 
 # Main service additional docker-compose options (ex: cpu_shares, deploy, ...)
 subsonic_compose_service_additional_options: |
