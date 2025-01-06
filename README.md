@@ -29,7 +29,7 @@ Available role variables are listed below, along with default values (see `defau
 
 subsonic_project_name: subsonic
 
-# Docker project dynamic vars (uses `docker_project_name` prefix, adapt if overriden)
+# Docker project dynamic vars (uses `docker_project_name` prefix, adapt if overridden)
 
 subsonic_traefik_loadbalancer_server_port: 4040
 subsonic_traefik_entrypoints: http,https
