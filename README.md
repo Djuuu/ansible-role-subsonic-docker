@@ -38,7 +38,7 @@ subsonic_traefik_middlewares:
   - "rewrite-location-https@file"
 
 # Main service additional docker-compose options (ex: cpu_shares, deploy, ...)
-subsonic_compose_service_additional_options: |
+subsonic_service_additional_options: |
   #ports:
   #  - "4040:4040"
 ```
